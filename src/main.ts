@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { UsersModule } from './users/users.module';
+import { BooksModule} from './books.ts/books.module'; 
 
 async function bootstrap() {
   
@@ -8,15 +10,30 @@ async function bootstrap() {
     rawBody: true,
   });
 
-  const config = new DocumentBuilder()
-    .setTitle(' Server')
-    .setDescription('The users-books API description')
+  const options = new DocumentBuilder()
+    .setTitle('Users')
+    .setDescription('The users API description')
     .setVersion('1.0')
-    .addTag('users-books')
+    .addTag('users')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api', app, document);
+  const userDocument = SwaggerModule.createDocument(app, options, {
+    include: [UsersModule],
+  });
+
+  SwaggerModule.setup('api/users', app, userDocument);
+
+  const secondOptions = new DocumentBuilder()
+  .setTitle('Books example')
+  .setDescription('The books API description')
+  .setVersion('1.0')
+  .addTag('books')
+  .build();
+
+const bookDocument = SwaggerModule.createDocument(app, secondOptions, {
+  include: [BooksModule],
+});
+SwaggerModule.setup('api/books', app, bookDocument);
   
   await app.listen(3000, () => console.log('Server started on port 3000'));
 }
