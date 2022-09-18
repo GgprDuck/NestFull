@@ -2,7 +2,7 @@ import { Body } from '@nestjs/common';
 import { Controller, Get, Post, Query, Req } from '@nestjs/common/decorators';
 import { ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { User } from 'd:/StartNest/users-books/src/users/schemas/users.schema';
+import { User } from './schemas/users.schema';
 
 @Controller('/v1/user')
 export class UsersController {
