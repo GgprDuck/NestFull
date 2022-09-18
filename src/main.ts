@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { UsersModule } from './users/users.module';
-import { BooksModule} from './books.ts/books.module'; 
+import { BooksModule} from './books/books.module'; 
 
 async function bootstrap() {
   
