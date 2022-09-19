@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { BooksModule} from './books/books.module'; 
 
 async function bootstrap() {
+  const PORT = process.env.PORT || 3000;
   
   const app = await NestFactory.create(AppModule,{
     rawBody: true,
@@ -35,6 +36,6 @@ const bookDocument = SwaggerModule.createDocument(app, secondOptions, {
 });
 SwaggerModule.setup('api/books', app, bookDocument);
   
-  await app.listen(3000, () => console.log('Server started on port 3000'));
+  await app.listen(PORT, () => console.log('Server started on port ${PORT}'));
 }
 bootstrap();
