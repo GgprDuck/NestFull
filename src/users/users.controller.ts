@@ -3,7 +3,7 @@ import { Controller, Get, Post, Query, Req } from '@nestjs/common/decorators';
 import { ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
-import { UsersRepository } from './users.repository';
+
 
 @Controller('/v1/user')
 export class UsersController {
