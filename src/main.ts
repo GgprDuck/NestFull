@@ -34,7 +34,7 @@ async function bootstrap() {
 const bookDocument = SwaggerModule.createDocument(app, secondOptions, {
   include: [BooksModule],
 });
-SwaggerModule.setup('', app, bookDocument);
+SwaggerModule.setup('api/books', app, bookDocument);
   
   await app.listen(PORT, () => console.log('Server started on port ${PORT}'));
 }
