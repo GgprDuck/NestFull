@@ -3,10 +3,12 @@ import { Controller, Get, Post, Query, Req } from '@nestjs/common/decorators';
 import { ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
+import { UsersRepository } from './users.repository';
 
 @Controller('/v1/user')
 export class UsersController {
   constructor(private UsersService: UsersService) {}
+
 
   @Post('/create')
   @ApiResponse({ status: 201, description: 'The user has been successfully created.',})
@@ -38,4 +40,10 @@ export class UsersController {
     findById(@Body('_id') _id:string){
       return this.UsersService.findById(_id);
     }
-  }
+
+    @Post('/newId')
+    @ApiResponse({ status: 200, description: 'The id successfully changed',})
+    changeIp(@Body('_id') _idNew:string, @Body('_id') _id:string): Promise<string | User> {
+        return this.UsersService.newId(_id, _idNew);
+    }
+}
