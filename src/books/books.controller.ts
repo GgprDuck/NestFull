@@ -18,10 +18,4 @@ export class BooksController {
       {
       this.BooksService.create(createBookDto);
     }
-    // return this.BooksService.create({
-    //   name: name,
-    //   style: style,
-    //   rate: rate,
-    //   author: author,
-    // });
   }
