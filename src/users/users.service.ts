@@ -7,11 +7,14 @@ import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,private UsersRepository: UsersRepository) {}
+  constructor(private UsersRepository: UsersRepository,@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+    return this.UsersRepository.create(createUserDto)
+  }
+
+  async newId(_id: string, _idNew: string): Promise<User | "User wasn`t found">{
+    return this.UsersRepository.NewId(_id, _idNew);
   }
 
   async signIn(name: string, email: string , password: string){
@@ -23,19 +26,11 @@ export class UsersService {
     return "NO";
   }
 
-  async findById(_id: string): Promise<User | "User wasn`t found">{
-    const user = await this.userModel.findById({_id: _id});
-    if(user){
-      return user;
-    }
-    return "User wasn`t found";
+  async findById(_id: string): Promise<User | "User wasn`t found"> {
+    return this.UsersRepository.findById(_id);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
-  }
-
-  async newId(_id: string, _idNew: string): Promise<User | "User wasn`t found">{
-    return this.UsersRepository.NewId(_id, _idNew);
+  async findAll(): Promise<User[]>{
+    return this.UsersRepository.findAll();
   }
 }
