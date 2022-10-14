@@ -1,6 +1,6 @@
-import { Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body,  ValidationPipe } from '@nestjs/common';
 import { Controller, Post, } from '@nestjs/common/decorators';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
@@ -11,11 +11,27 @@ export class BooksController {
   constructor(private BooksService: BooksService) { }
 
   @Post('/create')
-  @ApiResponse({ status: 201, description: 'The book has been successfully created.', })
-  @ApiResponse({ status: 500, description: 'Forbidden.' })
-  getUser(@Body(new ValidationPipe()) createBookDto: CreateBookDto,
-  )  
-      {
-      this.BooksService.create(createBookDto);
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          $ref: getSchemaPath(Book),
+        },
+      },
+    },
+    description: '200. Success. Returns a user',
+  })
+  @ApiNotFoundResponse({
+    description: '404. BadRequestException. Enter all information',
+  })
+
+  create(@Body(new ValidationPipe()) createBookDto: CreateBookDto) {
+    const book =  this.BooksService.create(createBookDto);
+    if(book){
+      return book;
     }
+
+    return BadRequestException
   }
+}

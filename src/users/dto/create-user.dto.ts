@@ -16,4 +16,10 @@ export class CreateUserDto {
 
   @ApiProperty()
   isEnabled?: Boolean;
+
+  @ApiProperty()
+  accessTocken?: string;
+
+  @ApiProperty()
+  refreshTocken?: string;
 }

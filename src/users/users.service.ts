@@ -14,7 +14,6 @@ export class UsersService {
   async newId(_id: string, _idNew: string): Promise<User | "User wasn`t found">{
     return this.UsersRepository.NewId(_id, _idNew);
   }
-
   
 
   async findById(_id: string): Promise<User | "User wasn`t found"> {
@@ -27,5 +26,9 @@ export class UsersService {
 
   async signIn(name: string, email: string , password: string){
     return this.UsersRepository.signIn(name, email, password);
+  }
+
+  async findOne(name: string){
+    this.UsersRepository.findOne(name);
   }
 }

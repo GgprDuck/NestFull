@@ -4,9 +4,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 
+
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>
+  ) {}
 
   async NewId(_id: string, _idNew: string): Promise<User | "User wasn`t found">{
     const user = await this.userModel.findById({_id: _id});
@@ -44,4 +46,12 @@ export class UsersRepository {
     return "NO";
   }
 
+
+  async findOne(name:string){
+    const user = await this.userModel.findOne({name:name});
+    if(user){
+      return user;
+    }
+    return "User wasn`t found";
+  }
 }
