@@ -26,8 +26,8 @@ export class UsersController {
     description: '400. BadRequestException.',
   })
   @Post('/create')
-  getUser(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string): Promise<User> {
-    const user = this.UsersService.create({
+  async getUser(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string): Promise<User> {
+    const user = await this.UsersService.create({
       name: name,
       email: email,
       password: password
@@ -123,9 +123,9 @@ export class UsersController {
     description: '404. User not found.',
   })
   @Post('/newId')
-  changeIp(@Body('_idNew') _idNew: string, @Body('_id') _id: string): Promise<string | User> {
+  async changeIp(@Body('_idNew') _idNew: string, @Body('_id') _id: string): Promise<string | User> {
     try {
-      return this.UsersService.newId(_id, _idNew);
+      return await this.UsersService.newId(_id, _idNew);
     }
     catch (error) {
       throw new NotFoundException("User was not found");

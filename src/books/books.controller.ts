@@ -6,7 +6,7 @@ import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
 
 
-@Controller('/v1/book')
+@Controller('/book')
 export class BooksController {
   constructor(private BooksService: BooksService) { }
 
@@ -26,8 +26,8 @@ export class BooksController {
     description: '400. BadRequestException.',
   })
   @Post('/create')
-  create(@Body(new ValidationPipe()) createBookDto: CreateBookDto) {
-    const book = this.BooksService.create(createBookDto);
+  async create(@Body(new ValidationPipe()) createBookDto: CreateBookDto) {
+    const book = await this.BooksService.create(createBookDto);
     if(book){
       return book;
     }
