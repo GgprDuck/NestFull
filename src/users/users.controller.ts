@@ -1,10 +1,9 @@
-import { Body, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, NotFoundException } from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common/decorators';
-import { ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponse, ApiUnauthorizedResponse, getSchemaPath } from '@nestjs/swagger';
+import { ApiBadRequestResponse,  ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
 import { AuthService } from '../auth/auth.service';
-import { error } from 'console';
 
 
 @Controller('/v1/user')
@@ -23,23 +22,22 @@ export class UsersController {
     },
     description: '201. The user has been successfully created',
   })
-  @ApiNotFoundResponse({
-    description: '404. NotFoundException. User was not found',
+  @ApiBadRequestResponse({
+    description: '400. BadRequestException.',
   })
   @Post('/create')
-  @ApiResponse({ status: 500, description: 'Forbidden.' })
-  getUser(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string): Promise<User>{
+  getUser(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string): Promise<User> {
     const user = this.UsersService.create({
       name: name,
       email: email,
       password: password
     });
-    if(user){
-      return user;
+
+    if (!user) {
+      throw new ConflictException('Enter all necessary values');
     }
-    else{
-      ApiNotFoundResponse;
-    }
+
+    return user;
   }
 
   @ApiOkResponse({
@@ -53,12 +51,17 @@ export class UsersController {
     },
     description: '200. The user successfully signed-in.',
   })
-  @ApiNotFoundResponse({
-    description: '500. Forbidden.',
+  @ApiBadRequestResponse({
+    description: '404. Not found.',
   })
   @Post('/sign-in')
   signIn(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string) {
-    return this.UsersService.signIn(name, email, password);
+    try {
+      return this.UsersService.signIn(name, email, password);
+    }
+    catch (error) {
+      return new BadRequestException("Wrong entered valuses");
+    }
   }
 
   @ApiOkResponse({
@@ -90,15 +93,19 @@ export class UsersController {
         },
       },
     },
-    description: '200. The user successfully signed-in.',
+    description: '200. The user successfully found.',
   })
-  @ApiNoContentResponse({
-    description: '500. Forbidden.',
+  @ApiNotFoundResponse({
+    description: '404. User was not found.',
   })
   @Post("/findById")
-  @ApiResponse({ status: 200, description: 'The user successfully found', })
   findById(@Body('_id') _id: string) {
-    return this.UsersService.findById(_id);
+    try {
+      return this.UsersService.findById(_id);
+    }
+    catch (error) {
+      throw new NotFoundException("User was not found");
+    }
   }
 
   @ApiOkResponse({
@@ -112,12 +119,17 @@ export class UsersController {
     },
     description: '200. The id successfully changed.',
   })
-  @ApiNoContentResponse({
-    description: '500. User not found.',
+  @ApiNotFoundResponse({
+    description: '404. User not found.',
   })
   @Post('/newId')
   changeIp(@Body('_idNew') _idNew: string, @Body('_id') _id: string): Promise<string | User> {
-    return this.UsersService.newId(_id, _idNew);
+    try {
+      return this.UsersService.newId(_id, _idNew);
+    }
+    catch (error) {
+      throw new NotFoundException("User was not found");
+    }
   }
 
   @ApiOkResponse({
@@ -129,16 +141,21 @@ export class UsersController {
         },
       },
     },
-    description: '200. User signed-in.',
+    description: '200. The user successfully signed-in.',
   })
-  @ApiUnauthorizedResponse({
-    description: '500. Wrong values.',
+  @ApiBadRequestResponse({
+    description: '400. BadRequestException.',
   })
   @Post("/log")
   login(@Body('name') name: string, @Body('password') password: string) {
-    return this.AuthService.login({
-      name: name,
-      password: password
-    })
+    try {
+      return this.AuthService.login({
+        name: name,
+        password: password
+      })
+    }
+    catch(error){
+      return new BadRequestException("Wrong entered valuses");
+    }
   }
 }

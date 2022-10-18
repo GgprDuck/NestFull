@@ -11,7 +11,7 @@ export class BooksRepository {
     
     async create(createBookDto: CreateBookDto): Promise<Book> {
         const createdUser = new this.bookModel(createBookDto);
-        return createdUser.save();
+        return await createdUser.save();
     }
 
     async findAllBooks(){

@@ -14,7 +14,8 @@ export class UsersRepository {
     const user = await this.userModel.findById({_id: _id});
     if(user){
         user._id = _idNew;
-      return user.save();
+      await user.save();
+      return user;
     }
     return "User wasn`t found";
   }
@@ -39,7 +40,6 @@ export class UsersRepository {
 
   async signIn(name: string, email: string , password: string){
     const user =  await this.userModel.findOne({name:name, email:email, password:password});
-    console.log(user);
     if(user){
      return "Success"; 
     }

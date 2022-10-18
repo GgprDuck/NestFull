@@ -1,6 +1,6 @@
-import { BadRequestException, Body,  ValidationPipe } from '@nestjs/common';
+import { Body,  ConflictException,  ValidationPipe } from '@nestjs/common';
 import { Controller, Post, } from '@nestjs/common/decorators';
-import { ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
@@ -10,7 +10,7 @@ import { CreateBookDto } from './books.dto/create-books.dto';
 export class BooksController {
   constructor(private BooksService: BooksService) { }
 
-  @Post('/create')
+  
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -20,18 +20,17 @@ export class BooksController {
         },
       },
     },
-    description: '200. Success. Returns a user',
+    description: '200. Success. Returns a book',
   })
-  @ApiNotFoundResponse({
-    description: '404. BadRequestException. Enter all information',
+  @ApiBadRequestResponse({
+    description: '400. BadRequestException.',
   })
-
+  @Post('/create')
   create(@Body(new ValidationPipe()) createBookDto: CreateBookDto) {
-    const book =  this.BooksService.create(createBookDto);
+    const book = this.BooksService.create(createBookDto);
     if(book){
       return book;
     }
-
-    return BadRequestException
+    return new ConflictException('Enter all necessary values');
   }
 }

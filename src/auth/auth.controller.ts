@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UnauthorizedException } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, getSchemaPath } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto/auth.log.dto";
 
@@ -26,15 +26,6 @@ export default class AuthController {
     @ApiNotFoundResponse({
         description: '404. NotFoundException. User was not found',
     })
-    @ApiUnauthorizedResponse({
-        schema: {
-            type: 'object',
-            example: {
-                message: 'string',
-            },
-        },
-        description: '401. UnauthorizedException. Wrong login or password',
-    })
     @Post('/log')
     login(@Body('name') name: string, @Body('password') password: string, @Body('email') email: string) {
         const user = this.validateUser(name, password, email);
@@ -45,8 +36,7 @@ export default class AuthController {
             })
         }
         else {
-            return UnauthorizedException;
+            throw new UnauthorizedException('Enter right values');
         }
-
     }
 }
