@@ -3,7 +3,7 @@ import { ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from "@nestjs/swagg
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto/auth.log.dto";
 
-@Controller('/v1/user')
+@Controller()
 export default class AuthController {
 
     constructor(private AuthService: AuthService) { }

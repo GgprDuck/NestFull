@@ -6,7 +6,7 @@ import { User } from './schemas/users.schema';
 import { AuthService } from '../auth/auth.service';
 
 
-@Controller('/v1/user')
+@Controller()
 export class UsersController {
   constructor(private UsersService: UsersService,
     private AuthService: AuthService) { }

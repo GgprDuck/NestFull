@@ -6,7 +6,7 @@ import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
 
 
-@Controller('/book')
+@Controller()
 export class BooksController {
   constructor(private BooksService: BooksService) { }
 
