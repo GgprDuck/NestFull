@@ -12,11 +12,10 @@ import { AuthService } from '../auth/auth.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name:Book.name, schema: BookSchema }]),
-    MongooseModule.forFeature([{ name:User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name:Book.name, schema: BookSchema }, { name:User.name, schema: UserSchema }]),
     UsersModule,
   ],
   controllers: [BooksController],
-  providers: [BooksService, BooksRepository, UsersRepository, JwtService,AuthService],
+  providers: [BooksService, BooksRepository],
 })
 export class BooksModule {}

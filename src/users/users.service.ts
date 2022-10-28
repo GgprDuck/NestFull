@@ -35,20 +35,6 @@ export class UsersService {
     this.UsersRepository.findOne(name);
   }
 
-  async login(AuthDto) {
-
-    const user = await this.userModel.findOne(AuthDto);
-
-    const tockens = this.AuthService.pushTockens(AuthDto);
-
-    user.accessTocken = (await tockens).accessToken;
-    user.refreshTocken = (await tockens).refreshToken;
-    await user.save();
-    return {
-      tockens
-    };
-  }
-
   async ValidateUser(AuthDto){
     return this.UsersRepository.validateUser(AuthDto);
   }

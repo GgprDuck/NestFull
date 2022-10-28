@@ -6,10 +6,13 @@ import { User } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import  LocalAuthGuard  from '../guards/local.auth.guards';
 import { AuthDto } from '../auth/dto/auth.log.dto';
+import { AuthService } from '../auth/auth.service';
+
 @Controller()
 export class UsersController {
   constructor(
     private usersService: UsersService,
+    private authService: AuthService,
     ) { }
 
   @ApiOkResponse({
@@ -144,7 +147,7 @@ export class UsersController {
   })
   @Post('/log')
   login(@Body() AuthDto:AuthDto) {
-      const user =  this.usersService.login(AuthDto);
+      const user =  this.authService.log(AuthDto);
 
       if (!user) {
         throw new UnauthorizedException('Enter right values');

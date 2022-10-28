@@ -32,8 +32,6 @@ export class BooksController {
     @Post('/createBook')
     async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
 
-    const user = await this.UserRepository.validateUser({name:createBookDto.name, email:createBookDto.email, password:createBookDto.password});
-
     const book = await this.BooksService.create(createBookDto);
 
     if(!book){

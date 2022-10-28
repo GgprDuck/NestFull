@@ -49,9 +49,9 @@ export class AuthService {
       email: AuthDto.email,
       password: AuthDto.password,
     };
-
-    const user = await this.usersRepository.validateUser(AuthDto);
     
+    const user = await this.usersRepository.validateUser(AuthDto);
+
       const accessToken = this.jwtService.sign(payload, {
         expiresIn: authConstants.jwt.expirationTime.accessToken,
         secret: authConstants.jwt.secret,
