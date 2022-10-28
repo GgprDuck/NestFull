@@ -14,12 +14,4 @@ export class SignInDto {
   @ApiProperty()
   password: string;
 
-  @ApiProperty()
-  isEnabled: 0;
-
-  @ApiProperty()
-  accessTocken: string;
-
-  @ApiProperty()
-  refreshTocken: string;
 }

@@ -3,24 +3,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthDto } from '../auth/dto/auth.log.dto';
-import { Payload } from '../auth/interfaces/payload.interface';
-import authConstants from '../auth/auth.constants';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
+import { SignInDto } from './dto/signIn.dto';
 
 @Injectable()
 export class UsersRepository {
-  constructor( private jwtService: JwtService,
-    private authServise:AuthService,
-    @InjectModel(User.name) private userModel: Model<UserDocument>
-  ) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private authServise: AuthService,
+  ) { }
 
-  async NewId(_id: string, _idNew: string): Promise<User | "User wasn`t found">{
-    const user = await this.userModel.findById({_id: _id});
-      user._id = _idNew;
-      await user.save();
-      return user;
+  async NewId(_id: string, _idNew: string): Promise<User | "User wasn`t found"> {
+    const user = await this.userModel.findById({ _id: _id });
+    user._id = _idNew;
+    await user.save();
+    return user;
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -28,9 +25,9 @@ export class UsersRepository {
     return createdUser.save();
   }
 
-  async findById(_id: string): Promise<User | "User wasn`t found">{
-    const user = await this.userModel.findById({_id: _id});
-    if(user){
+  async findById(_id: string): Promise<User | "User wasn`t found"> {
+    const user = await this.userModel.findById({ _id: _id });
+    if (user) {
       return user;
     }
     return "User wasn`t found";
@@ -40,79 +37,36 @@ export class UsersRepository {
     return this.userModel.find().exec();
   }
 
-  async findOne(name:string){
-    const user = await this.userModel.findOne({name:name});
-    if(user){
+  async findOne(name: string) {
+    const user = await this.userModel.findOne({ name: name });
+    if (user) {
       return user;
     }
     return "User wasn`t found";
   }
 
-async validateUser(AuthDto: AuthDto): Promise<any> {
-    const user = await this.userModel.findOne({ name: AuthDto.name, email: AuthDto.email, password: AuthDto.password });
-    if (user && user.password === AuthDto.password) {
-        const { password, ...result } = user;
-        return result;
+  async validateUser(SignInDto: SignInDto): Promise<any> {
+    const user = await this.userModel.findOne({ name: SignInDto.name, email: SignInDto.email, password: SignInDto.password });
+    if (user && user.password === SignInDto.password) {
+      const { password, ...result } = user;
+      return result;
     }
     return null;
-}
+  }
 
-async login(AuthDto) {
-    const payload: Payload = {
-        name: AuthDto.name,
-        email: AuthDto.email,
-        password: AuthDto.password,
-    };
+  async login(AuthDto) {
 
     const user = await this.userModel.findOne(AuthDto);
 
-    const accessToken = this.jwtService.sign(payload, {
-        expiresIn: authConstants.jwt.expirationTime.accessToken,
-        secret: authConstants.jwt.secret,
-    });
-    const refreshToken = this.jwtService.sign(payload, {
-        expiresIn: authConstants.jwt.expirationTime.refreshToken,
-        secret: authConstants.jwt.secret,
-    });
+    const tockens = this.authServise.pushTockens(AuthDto);
 
-    user.accessTocken = accessToken;
-    user.refreshTocken = refreshToken;
+    user.accessTocken = (await tockens).accessToken;
+    user.refreshTocken = (await tockens).refreshToken;
     await user.save();
     return {
-        accessToken,
-        refreshToken
+      tockens
     };
+  }
+
 }
 
-public async refreshTockens(authDto: AuthDto) {
-
-    const payload: Payload = {
-      name: authDto.name,
-      email: authDto.email,
-      password: authDto.password,
-    };
-
-    const user = await this.userModel.findOne(AuthDto);
-
-    const check = this.authServise.verifyToken(user.accessTocken, authConstants.jwt.secret);
-    if (check) {
-      const accessToken = this.jwtService.sign(payload, {
-        expiresIn: authConstants.jwt.expirationTime.accessToken,
-        secret: authConstants.jwt.secret,
-      });
-      const refreshToken = this.jwtService.sign(payload, {
-        expiresIn: authConstants.jwt.expirationTime.refreshToken,
-        secret: authConstants.jwt.secret,
-      });
-
-      user.accessTocken = accessToken;
-      user.refreshTocken = refreshToken;
-      await user.save();
-
-      return {
-        accessToken,
-        refreshToken
-      };
-    }
-}
-}
