@@ -5,12 +5,13 @@ import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
 import LocalAuthGuard from '../guards/local.auth.guard';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Controller()
 export class BooksController {
-  UserRepository: any;
   constructor(
     private BooksService: BooksService,
+    private UserRepository: UsersRepository
     ) { }
   
   @UseGuards(LocalAuthGuard)
@@ -31,7 +32,7 @@ export class BooksController {
     @Post('/createBook')
     async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
 
-    const user = await this.UserRepository.validateUser({email:createBookDto.email, password:createBookDto.password});
+    const user = await this.UserRepository.validateUser({name:createBookDto.name, email:createBookDto.email, password:createBookDto.password});
 
     const book = await this.BooksService.create(createBookDto);
 
