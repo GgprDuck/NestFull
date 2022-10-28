@@ -5,7 +5,6 @@ import { AuthDto } from "./dto/auth.log.dto";
 
 @Controller()
 export default class AuthController {
-
     constructor(private AuthService: AuthService) { }
     @Post()
     validateUser(AuthDto:AuthDto) {

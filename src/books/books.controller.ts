@@ -1,4 +1,4 @@
-import { BadRequestException, Body, UnauthorizedException} from '@nestjs/common';
+import { BadRequestException, Body, UnauthorizedException, UseGuards} from '@nestjs/common';
 import { Controller, Post, } from '@nestjs/common/decorators';
 import { ApiBadRequestResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { BooksService } from './books.service';
@@ -6,6 +6,7 @@ import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
 import { AuthService } from '../auth/auth.service';
 import authConstants from '../auth/auth.constants';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class BooksController {
@@ -13,6 +14,8 @@ export class BooksController {
     private BooksService: BooksService,
     private AuthServise: AuthService,
     ) { }
+  
+  @UseGuards(AuthGuard)
 
   @ApiOkResponse({
     schema: {

@@ -12,10 +12,10 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     @InjectModel(User.name) private userModel: Model<UserDocument>
-  ) {}
+  ) { }
 
-  async validateUser(AuthDto:AuthDto): Promise<any> {
-    const user =  await this.userModel.findOne({name:AuthDto.name, email:AuthDto.email, password:AuthDto.password});
+  async validateUser(AuthDto: AuthDto): Promise<any> {
+    const user = await this.userModel.findOne({ name: AuthDto.name, email: AuthDto.email, password: AuthDto.password });
     if (user && user.password === AuthDto.password) {
       const { password, ...result } = user;
       return result;
@@ -24,13 +24,13 @@ export class AuthService {
   }
 
   async login(AuthDto) {
-    const payload: Payload  = {
-      name: AuthDto._id,
+    const payload: Payload = {
+      name: AuthDto.name,
       email: AuthDto.email,
       password: AuthDto.password,
     };
 
-    const user =  await this.userModel.findOne(AuthDto);
+    const user = await this.userModel.findOne(AuthDto);
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: authConstants.jwt.expirationTime.accessToken,
@@ -57,6 +57,38 @@ export class AuthService {
       return user;
     } catch (error) {
       return null;
+    }
+  }
+
+  public async refreshTockens(authDto: AuthDto) {
+
+    const payload: Payload = {
+      name: authDto.name,
+      email: authDto.email,
+      password: authDto.password,
+    };
+
+    const user = await this.userModel.findOne(AuthDto);
+
+    const check = this.verifyToken(user.accessTocken, authConstants.jwt.secret);
+    if (check) {
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: authConstants.jwt.expirationTime.accessToken,
+        secret: authConstants.jwt.secret,
+      });
+      const refreshToken = this.jwtService.sign(payload, {
+        expiresIn: authConstants.jwt.expirationTime.refreshToken,
+        secret: authConstants.jwt.secret,
+      });
+
+      user.accessTocken = accessToken;
+      user.refreshTocken = refreshToken;
+      await user.save();
+
+      return {
+        accessToken,
+        refreshToken
+      };
     }
   }
 }
