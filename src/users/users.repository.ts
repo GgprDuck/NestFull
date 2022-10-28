@@ -44,8 +44,9 @@ export class UsersRepository {
   }
 
   async validateUser(SignInDto: SignInDto): Promise<any> {
-    const user = await this.userModel.findOne({ name: SignInDto.name, email: SignInDto.email, password: SignInDto.password }, {"name":1, "email":1, "password":0});
+    const user = await this.userModel.findOne({ name: SignInDto.name, email: SignInDto.email, password: SignInDto.password }, {"name":1, "email":1, "password":1});
     if (user.password === SignInDto.password) {
+      const user = await this.userModel.findOne({ name: SignInDto.name, email: SignInDto.email, password: SignInDto.password }, {"name":1, "email":1, "password":0});
       return user;
     }
     return null;
