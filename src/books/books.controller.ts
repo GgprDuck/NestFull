@@ -5,18 +5,19 @@ import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
 import { AuthService } from '../auth/auth.service';
+import LocalAuthGuard from '../guards/local.auth.guard';
+import { AuthRepository } from '../auth/auth.repository';
 import authConstants from '../auth/auth.constants';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class BooksController {
   constructor(
     private BooksService: BooksService,
     private AuthServise: AuthService,
+    private AuthRepository: AuthRepository,
     ) { }
   
-  @UseGuards(AuthGuard)
-
+  @UseGuards(LocalAuthGuard)
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -32,8 +33,8 @@ export class BooksController {
     description: '400. BadRequestException.',
   })
   @Post('/createBook')
-  async create(@Body() createBookDto: CreateBookDto) {
-    const user = await this.AuthServise.validateUser({email:createBookDto.email, password:createBookDto.password});
+  async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
+    const user = await this.AuthRepository.validateUser({email:createBookDto.email, password:createBookDto.password});
     const quest = await this.AuthServise.verifyToken(user, authConstants.jwt.secret);
     if(!quest){
      throw new UnauthorizedException('Wrong tocken');

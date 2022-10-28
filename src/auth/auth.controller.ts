@@ -1,14 +1,16 @@
 import { Body, Controller, Post, UnauthorizedException } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from "@nestjs/swagger";
-import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto/auth.log.dto";
+import { AuthRepository } from "./auth.repository";
 
 @Controller()
 export default class AuthController {
-    constructor(private AuthService: AuthService) { }
+    constructor(
+        private authRepository: AuthRepository
+        ) { }
     @Post()
     validateUser(AuthDto:AuthDto) {
-        return this.AuthService.validateUser(AuthDto);
+        return this.authRepository.validateUser(AuthDto);
     }
 
     @ApiOkResponse({
@@ -29,7 +31,7 @@ export default class AuthController {
     login(@Body() AuthDto:AuthDto) {
         const user = this.validateUser(AuthDto);
         if (user) {
-            return this.AuthService.login(AuthDto);
+            return this.authRepository.login(AuthDto);
         }
         else {
             throw new UnauthorizedException('Enter right values');

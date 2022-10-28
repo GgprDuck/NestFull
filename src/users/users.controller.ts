@@ -1,4 +1,4 @@
-import { BadRequestException, Body, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Body, NotFoundException, UseGuards } from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common/decorators';
 import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -6,11 +6,16 @@ import { User } from './schemas/users.schema';
 import { AuthService } from '../auth/auth.service';
 import { SignInDto } from './dto/signIn.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthRepository } from '../auth/auth.repository';
+import  LocalAuthGuard  from '../guards/local.auth.guard'
 
 @Controller()
 export class UsersController {
-  constructor(private UsersService: UsersService,
-    private AuthService: AuthService) { }
+  constructor(
+    private UsersService: UsersService,
+    private AuthService: AuthService,
+    private AuthRepository: AuthRepository
+    ) { }
 
   @ApiOkResponse({
     schema: {
@@ -49,7 +54,7 @@ export class UsersController {
     description: '200. The user successfully signed-in.',
   })
   @ApiNotFoundResponse({
-    description: '404. Forbidden.',
+    description: '404. Not Found.',
   })
   @Get('/findAll')
   findAll() {
@@ -70,6 +75,7 @@ export class UsersController {
   @ApiNotFoundResponse({
     description: '404. User was not found.',
   })
+
   @Post("/findById")
   findById(@Body('_id') _id: string) {
     const user = this.UsersService.findById(_id);
@@ -106,6 +112,7 @@ export class UsersController {
       return user;
   }
 
+  @UseGuards(LocalAuthGuard)
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -122,7 +129,7 @@ export class UsersController {
   })
   @Post("/log")
   login(@Body() user: SignInDto) {
-    const tockens = this.AuthService.login(user);
+    const tockens = this.AuthRepository.login(user);
 
     if (!tockens) {
       throw new BadRequestException("Wrong entered valuses");
