@@ -6,15 +6,15 @@ import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
 import { AuthService } from '../auth/auth.service';
 import LocalAuthGuard from '../guards/local.auth.guard';
-import { AuthRepository } from '../auth/auth.repository';
 import authConstants from '../auth/auth.constants';
+import { UsersRepository } from '../users/users.repository';
 
 @Controller()
 export class BooksController {
   constructor(
     private BooksService: BooksService,
     private AuthServise: AuthService,
-    private AuthRepository: AuthRepository,
+    private UserRepository: UsersRepository
     ) { }
   
   @UseGuards(LocalAuthGuard)
@@ -34,7 +34,7 @@ export class BooksController {
   })
   @Post('/createBook')
   async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
-    const user = await this.AuthRepository.validateUser({email:createBookDto.email, password:createBookDto.password});
+    const user = await this.UserRepository.validateUser({email:createBookDto.email, password:createBookDto.password});
     const quest = await this.AuthServise.verifyToken(user, authConstants.jwt.secret);
     if(!quest){
      throw new UnauthorizedException('Wrong tocken');

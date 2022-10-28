@@ -1,20 +1,19 @@
-import { BadRequestException, Body, NotFoundException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common/decorators';
 import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
 import { AuthService } from '../auth/auth.service';
-import { SignInDto } from './dto/signIn.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthRepository } from '../auth/auth.repository';
-import  LocalAuthGuard  from '../guards/local.auth.guard'
+import  LocalAuthGuard  from '../guards/local.auth.guard';
+import { AuthDto } from '../auth/dto/auth.log.dto';
 
 @Controller()
 export class UsersController {
+  AuthRepository: any;
   constructor(
     private UsersService: UsersService,
     private AuthService: AuthService,
-    private AuthRepository: AuthRepository
     ) { }
 
   @ApiOkResponse({
@@ -127,14 +126,34 @@ export class UsersController {
   @ApiBadRequestResponse({
     description: '400. BadRequestException.',
   })
-  @Post("/log")
-  login(@Body() user: SignInDto) {
-    const tockens = this.AuthRepository.login(user);
 
-    if (!tockens) {
-      throw new BadRequestException("Wrong entered valuses");
-    }
+  @Post()
+  validateUser(AuthDto:AuthDto) {
+      return this.AuthRepository.validateUser(AuthDto);
+  }
 
-    return tockens;
+  @ApiOkResponse({
+      schema: {
+          type: 'object',
+          properties: {
+              data: {
+                  $ref: getSchemaPath(AuthDto),
+              },
+          },
+      },
+      description: '200. Success. Returns a user with tocken',
+  })
+  @ApiNotFoundResponse({
+      description: '404. NotFoundException. User was not found',
+  })
+  @Post('/log')
+  login(@Body() AuthDto:AuthDto) {
+      const user = this.validateUser(AuthDto);
+      if (user) {
+          return this.AuthRepository.login(AuthDto);
+      }
+      else {
+          throw new UnauthorizedException('Enter right values');
+      }
   }
 }
