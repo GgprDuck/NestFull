@@ -5,23 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { BooksModule } from './books/books.module';
 import { AuthModule } from './auth/auth.module';
-import { RouterModule, Routes } from '@nestjs/core';
-
-const routes: Routes = [
-  {
-    path: '/v1',
-    children: [
-      { path: '/auth', module: AuthModule },
-      { path: '/users', module: UsersModule },
-      { path: '/books', module: BooksModule},
-    ],
-  },
-];
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-  MongooseModule.forRoot('mongodb://localhost:27017/usersBooks'), 
-  RouterModule.register(routes),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  MongooseModule.forRoot(process.env.MONGODB_URL as string), 
   UsersModule,
   BooksModule,
   AuthModule

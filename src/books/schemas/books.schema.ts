@@ -5,8 +5,9 @@ export type BookDocument = Book & Document;
 
 @Schema()
 export class Book {
+
   @Prop({required:true})
-  name: string ;
+  name: string;
 
   @Prop({required:true})
   style: string;

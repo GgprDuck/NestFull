@@ -1,16 +1,19 @@
-import { Body,  ConflictException,  ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, UnauthorizedException} from '@nestjs/common';
 import { Controller, Post, } from '@nestjs/common/decorators';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
-
+import { AuthService } from '../auth/auth.service';
+import authConstants from '../auth/auth.constants';
 
 @Controller()
 export class BooksController {
-  constructor(private BooksService: BooksService) { }
+  constructor(
+    private BooksService: BooksService,
+    private AuthServise: AuthService,
+    ) { }
 
-  
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -25,12 +28,20 @@ export class BooksController {
   @ApiBadRequestResponse({
     description: '400. BadRequestException.',
   })
-  @Post('/create')
-  async create(@Body(new ValidationPipe()) createBookDto: CreateBookDto) {
-    const book = await this.BooksService.create(createBookDto);
-    if(book){
-      return book;
+  @Post('/createBook')
+  async create(@Body() createBookDto: CreateBookDto) {
+    const user = await this.AuthServise.validateUser({email:createBookDto.email, password:createBookDto.password});
+    const quest = await this.AuthServise.verifyToken(user, authConstants.jwt.secret);
+    if(!quest){
+     throw new UnauthorizedException('Wrong tocken');
     }
-    return new ConflictException('Enter all necessary values');
+
+   const book = await this.BooksService.create(createBookDto);
+
+    if(!book){
+      throw new BadRequestException('Enter all necessary values');
+    }
+
+    return book;  
   }
 }

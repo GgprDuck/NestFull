@@ -3,6 +3,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { UsersModule } from './users/users.module';
 import { BooksModule} from './books/books.module'; 
+import { HttpExceptionFilter } from './exeption.filter';
+import { ValidationPipe } from './pipes/valodationPipe'
 
 async function bootstrap() {
   const PORT = process.env.PORT || 3000;
@@ -12,30 +14,22 @@ async function bootstrap() {
   });
 
   const options = new DocumentBuilder()
-    .setTitle('Users')
+    .setTitle('Users/Books')
     .setDescription('The users API description')
     .setVersion('1.0')
-    .addTag('users')
+    .addTag('users/books')
     .build();
 
   const userDocument = SwaggerModule.createDocument(app, options, {
-    include: [UsersModule],
+    include: [UsersModule,BooksModule] ,
   });
 
-  SwaggerModule.setup('api/users', app, userDocument);
+  SwaggerModule.setup('api/usersBooks', app, userDocument);
 
-  const secondOptions = new DocumentBuilder()
-  .setTitle('Books example')
-  .setDescription('The books API description')
-  .setVersion('1.0')
-  .addTag('books')
-  .build();
-
-const bookDocument = SwaggerModule.createDocument(app, secondOptions, {
-  include: [BooksModule],
-});
-SwaggerModule.setup('api/books', app, bookDocument);
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new HttpExceptionFilter());
   
   await app.listen(PORT, () => console.log('Server started on port ' + PORT));
 }
+
 bootstrap();

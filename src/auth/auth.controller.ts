@@ -8,8 +8,8 @@ export default class AuthController {
 
     constructor(private AuthService: AuthService) { }
     @Post()
-    validateUser(name: string, pass: string, email: string) {
-        return this.AuthService.validateUser(name, pass, email);
+    validateUser(AuthDto:AuthDto) {
+        return this.AuthService.validateUser(AuthDto);
     }
 
     @ApiOkResponse({
@@ -27,13 +27,10 @@ export default class AuthController {
         description: '404. NotFoundException. User was not found',
     })
     @Post('/log')
-    login(@Body('name') name: string, @Body('password') password: string, @Body('email') email: string) {
-        const user = this.validateUser(name, password, email);
+    login(@Body() AuthDto:AuthDto) {
+        const user = this.validateUser(AuthDto);
         if (user) {
-            return this.AuthService.login({
-                name: name,
-                password: password,
-            })
+            return this.AuthService.login(AuthDto);
         }
         else {
             throw new UnauthorizedException('Enter right values');

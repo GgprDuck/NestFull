@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from 'class-validator';
 
-export class CreateUserDto {
+export class SignInDto {
   @IsString()
   @ApiProperty()
   name: string;
@@ -15,7 +15,7 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty()
-  isEnabled?: Boolean;
+  isEnabled: 0;
 
   @ApiProperty()
   accessTocken: string;

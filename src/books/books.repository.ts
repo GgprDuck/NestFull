@@ -4,7 +4,6 @@ import { Model } from "mongoose";
 import { CreateBookDto } from "./books.dto/create-books.dto";
 import { Book, BookDocument } from "./schemas/books.schema";
 
-
 @Injectable()
 export class BooksRepository {
     constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) {}
@@ -16,5 +15,5 @@ export class BooksRepository {
 
     async findAllBooks(){
         return this.bookModel.find().exec();
-      }
+    }
 }

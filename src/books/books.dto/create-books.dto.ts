@@ -4,6 +4,14 @@ import { IsString } from "class-validator";
 export class CreateBookDto {
     @IsString()
     @ApiProperty()
+    email:string;
+    
+    @IsString()
+    @ApiProperty()
+    password:string;
+
+    @IsString()
+    @ApiProperty()
     name: String;
 
     @IsString()

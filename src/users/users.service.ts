@@ -24,10 +24,6 @@ export class UsersService {
     return this.UsersRepository.findAll();
   }
 
-  async signIn(name: string, email: string , password: string){
-    return this.UsersRepository.signIn(name, email, password);
-  }
-
   async findOne(name: string){
     this.UsersRepository.findOne(name);
   }

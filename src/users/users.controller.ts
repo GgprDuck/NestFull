@@ -1,10 +1,11 @@
-import { BadRequestException, Body, ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Body, NotFoundException } from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common/decorators';
-import { ApiBadRequestResponse,  ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
 import { AuthService } from '../auth/auth.service';
-
+import { SignInDto } from './dto/signIn.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller()
 export class UsersController {
@@ -26,42 +27,14 @@ export class UsersController {
     description: '400. BadRequestException.',
   })
   @Post('/create')
-  async getUser(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string): Promise<User> {
-    const user = await this.UsersService.create({
-      name: name,
-      email: email,
-      password: password
-    });
+  async getUser(@Body() signUpUser: CreateUserDto): Promise<User> {
+    const user = await this.UsersService.create(signUpUser);
 
     if (!user) {
-      throw new ConflictException('Enter all necessary values');
+      throw new BadRequestException('Enter all necessary values');
     }
 
     return user;
-  }
-
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          $ref: getSchemaPath(User),
-        },
-      },
-    },
-    description: '200. The user successfully signed-in.',
-  })
-  @ApiBadRequestResponse({
-    description: '404. Not found.',
-  })
-  @Post('/sign-in')
-  signIn(@Body('name') name: string, @Body('email') email: string, @Body('password') password: string) {
-    try {
-      return this.UsersService.signIn(name, email, password);
-    }
-    catch (error) {
-      return new BadRequestException("Wrong entered valuses");
-    }
   }
 
   @ApiOkResponse({
@@ -83,7 +56,6 @@ export class UsersController {
     return this.UsersService.findAll();
   }
 
-
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -100,12 +72,13 @@ export class UsersController {
   })
   @Post("/findById")
   findById(@Body('_id') _id: string) {
-    try {
-      return this.UsersService.findById(_id);
-    }
-    catch (error) {
+    const user = this.UsersService.findById(_id);
+
+    if (!user) {
       throw new NotFoundException("User was not found");
     }
+
+    return user;
   }
 
   @ApiOkResponse({
@@ -124,12 +97,13 @@ export class UsersController {
   })
   @Post('/newId')
   async changeIp(@Body('_idNew') _idNew: string, @Body('_id') _id: string): Promise<string | User> {
-    try {
-      return await this.UsersService.newId(_id, _idNew);
-    }
-    catch (error) {
-      throw new NotFoundException("User was not found");
-    }
+      const user =  await this.UsersService.newId(_id, _idNew);
+
+      if(!user){
+       throw new NotFoundException("User was not found"); 
+      }
+      
+      return user;
   }
 
   @ApiOkResponse({
@@ -147,15 +121,13 @@ export class UsersController {
     description: '400. BadRequestException.',
   })
   @Post("/log")
-  login(@Body('name') name: string, @Body('password') password: string) {
-    try {
-      return this.AuthService.login({
-        name: name,
-        password: password
-      })
+  login(@Body() user: SignInDto) {
+    const tockens = this.AuthService.login(user);
+
+    if (!tockens) {
+      throw new BadRequestException("Wrong entered valuses");
     }
-    catch(error){
-      return new BadRequestException("Wrong entered valuses");
-    }
+
+    return tockens;
   }
 }
