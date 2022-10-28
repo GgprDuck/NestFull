@@ -10,6 +10,7 @@ import { UsersRepository } from '../users/users.repository';
 export class AuthService {
   constructor(
     private jwtService: JwtService,
+    private usersRepository:UsersRepository,
   ) { }
 
   public async verifyToken(token: string, secret: string): Promise<User | null> {
@@ -41,7 +42,7 @@ export class AuthService {
     return {accessToken, refreshToken}
   }
 
-  public async refreshTockens(AuthDto:AuthDto) {
+  public async log(AuthDto:AuthDto) {
 
     const payload: Payload = {
       name: AuthDto.name,
@@ -49,27 +50,56 @@ export class AuthService {
       password: AuthDto.password,
     };
 
-    // const user = await this.userRepository.validateUser(AuthDto);
+    const user = await this.usersRepository.validateUser(AuthDto);
+    
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: authConstants.jwt.expirationTime.accessToken,
+        secret: authConstants.jwt.secret,
+      });
+      const refreshToken = this.jwtService.sign(payload, {
+        expiresIn: authConstants.jwt.expirationTime.refreshToken,
+        secret: authConstants.jwt.secret,
+      });
 
-    // const check = this.verifyToken(user.accessTocken, authConstants.jwt.secret);
-    // if (check) {
-    //   const accessToken = this.jwtService.sign(payload, {
-    //     expiresIn: authConstants.jwt.expirationTime.accessToken,
-    //     secret: authConstants.jwt.secret,
-    //   });
-    //   const refreshToken = this.jwtService.sign(payload, {
-    //     expiresIn: authConstants.jwt.expirationTime.refreshToken,
-    //     secret: authConstants.jwt.secret,
-    //   });
+      user.accessTocken = accessToken;
+      user.refreshTocken = refreshToken;
+      await user.save();
 
-    //   // user.accessTocken = accessToken;
-    //   // user.refreshTocken = refreshToken;
-    //   // await user.save();
+      return {
+        accessToken,
+        refreshToken
+      };
+  }
 
-    //   return {
-    //     accessToken,
-    //     refreshToken
-    //   };
-    // }
+  public async RefreshTockens(AuthDto:AuthDto) {
+
+    const payload: Payload = {
+      name: AuthDto.name,
+      email: AuthDto.email,
+      password: AuthDto.password,
+    };
+
+    const user = await this.usersRepository.validateUser(AuthDto);
+
+    const check = this.verifyToken(user.accessTocken, authConstants.jwt.secret);
+    if (check) {
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: authConstants.jwt.expirationTime.accessToken,
+        secret: authConstants.jwt.secret,
+      });
+      const refreshToken = this.jwtService.sign(payload, {
+        expiresIn: authConstants.jwt.expirationTime.refreshToken,
+        secret: authConstants.jwt.secret,
+      });
+
+      user.accessTocken = accessToken;
+      user.refreshTocken = refreshToken;
+      await user.save();
+
+      return {
+        accessToken,
+        refreshToken
+      };
+    }
   }
 }

@@ -3,17 +3,13 @@ import { Controller, Get, Post } from '@nestjs/common/decorators';
 import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
-import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import  LocalAuthGuard  from '../guards/local.auth.guard';
+import  LocalAuthGuard  from '../guards/local.auth.guards';
 import { AuthDto } from '../auth/dto/auth.log.dto';
-
 @Controller()
 export class UsersController {
-  AuthRepository: any;
   constructor(
-    private UsersService: UsersService,
-    private AuthService: AuthService,
+    private usersService: UsersService,
     ) { }
 
   @ApiOkResponse({
@@ -32,7 +28,7 @@ export class UsersController {
   })
   @Post('/create')
   async getUser(@Body() signUpUser: CreateUserDto): Promise<User> {
-    const user = await this.UsersService.create(signUpUser);
+    const user = await this.usersService.create(signUpUser);
 
     if (!user) {
       throw new BadRequestException('Enter all necessary values');
@@ -57,7 +53,7 @@ export class UsersController {
   })
   @Get('/findAll')
   findAll() {
-    return this.UsersService.findAll();
+    return this.usersService.findAll();
   }
 
   @ApiOkResponse({
@@ -77,7 +73,7 @@ export class UsersController {
 
   @Post("/findById")
   findById(@Body('_id') _id: string) {
-    const user = this.UsersService.findById(_id);
+    const user = this.usersService.findById(_id);
 
     if (!user) {
       throw new NotFoundException("User was not found");
@@ -102,7 +98,7 @@ export class UsersController {
   })
   @Post('/newId')
   async changeIp(@Body('_idNew') _idNew: string, @Body('_id') _id: string): Promise<string | User> {
-      const user =  await this.UsersService.newId(_id, _idNew);
+      const user =  await this.usersService.newId(_id, _idNew);
 
       if(!user){
        throw new NotFoundException("User was not found"); 
@@ -129,7 +125,7 @@ export class UsersController {
 
   @Post()
   validateUser(AuthDto:AuthDto) {
-      return this.AuthRepository.validateUser(AuthDto);
+      return this.usersService.ValidateUser(AuthDto);
   }
 
   @ApiOkResponse({
@@ -148,12 +144,12 @@ export class UsersController {
   })
   @Post('/log')
   login(@Body() AuthDto:AuthDto) {
-      const user = this.validateUser(AuthDto);
-      if (user) {
-          return this.AuthRepository.login(AuthDto);
+      const user =  this.usersService.login(AuthDto);
+
+      if (!user) {
+        throw new UnauthorizedException('Enter right values');
       }
-      else {
-          throw new UnauthorizedException('Enter right values');
-      }
+      
+      return user;      
   }
 }

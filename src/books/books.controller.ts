@@ -4,8 +4,8 @@ import { ApiBadRequestResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swa
 import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
-import LocalAuthGuard from '../guards/local.auth.guard';
-import { UsersRepository } from 'src/users/users.repository';
+import LocalAuthGuard from '../guards/local.auth.guards';
+import { UsersRepository } from '../users/users.repository';
 
 @Controller()
 export class BooksController {

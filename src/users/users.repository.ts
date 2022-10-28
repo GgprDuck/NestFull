@@ -3,14 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthService } from '../auth/auth.service';
 import { SignInDto } from './dto/signIn.dto';
 
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private authServise: AuthService,
   ) { }
 
   async NewId(_id: string, _idNew: string): Promise<User | "User wasn`t found"> {
@@ -52,20 +50,6 @@ export class UsersRepository {
       return result;
     }
     return null;
-  }
-
-  async login(AuthDto) {
-
-    const user = await this.userModel.findOne(AuthDto);
-
-    const tockens = this.authServise.pushTockens(AuthDto);
-
-    user.accessTocken = (await tockens).accessToken;
-    user.refreshTocken = (await tockens).refreshToken;
-    await user.save();
-    return {
-      tockens
-    };
   }
 
 }

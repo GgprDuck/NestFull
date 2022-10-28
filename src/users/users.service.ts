@@ -10,7 +10,8 @@ import { AuthService } from '../auth/auth.service';
 export class UsersService {
   constructor(private UsersRepository: UsersRepository,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private AuthService:AuthService
+    private AuthService:AuthService,
+    
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -46,5 +47,13 @@ export class UsersService {
     return {
       tockens
     };
+  }
+
+  async ValidateUser(AuthDto){
+    return this.UsersRepository.validateUser(AuthDto);
+  }
+
+  async log(AuthDto){
+    return this.AuthService.log(AuthDto)
   }
 }
