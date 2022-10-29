@@ -146,7 +146,7 @@ export class UsersController {
     },
     description: '200. Success. Returns a user with tocken',
   })
-  @ApiNotFoundResponse({
+  @ApiBadRequestResponse({
     description: '404. NotFoundException. User was not found',
   })
   @Post('/log')
@@ -154,7 +154,32 @@ export class UsersController {
     const user = this.authService.log(AuthDto);
 
     if (!user) {
-      throw new UnauthorizedException('Enter right values');
+      throw new BadRequestException('Enter right values');
+    }
+
+    return user;
+  }
+
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          $ref: getSchemaPath(AuthDto),
+        },
+      },
+    },
+    description: '200. Success. Returns a user with tocken',
+  })
+  @ApiNotFoundResponse({
+    description: '404. NotFoundException. User was not found',
+  })
+  @Post('/logout')
+  logout(@Body() AuthDto) {
+    const user = this.authService.authLogout(AuthDto);
+
+    if (!user) {
+      throw new NotFoundException('Enter right values');
     }
 
     return user;
