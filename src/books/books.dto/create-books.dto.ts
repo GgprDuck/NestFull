@@ -1,32 +1,31 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class CreateBookDto {
     @IsString()
     @ApiProperty()
-    name:string;
+      name:string;
 
     @IsString()
     @ApiProperty()
-    email:string;
-    
-    @IsString()
-    @ApiProperty()
-    password:string;
+      email:string;
 
     @IsString()
     @ApiProperty()
-    style: String;
+      password:string;
 
     @IsString()
     @ApiProperty()
-    rate: Number;
+      style: String;
 
     @IsString()
     @ApiProperty()
-    author: String;
+      rate: Number;
 
-    @ApiProperty({type:[String]})
-    comments?: string[];
-  }
-  
+    @IsString()
+    @ApiProperty()
+      author: String;
+
+    @ApiProperty({ type: [String] })
+      comments?: string[];
+}

@@ -6,8 +6,8 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private appService: AppService) {}
 
-  @ApiResponse({ status: 200, description: 'Hi :)',})
-  @Get('/hi')  
+  @ApiResponse({ status: 200, description: 'Hi :)' })
+  @Get('/hi')
   getUser() {
     return this.appService.getUser();
   }

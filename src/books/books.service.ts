@@ -7,11 +7,11 @@ import { BooksRepository } from './books.repository';
 export class BooksService {
   constructor(private BooksRepository: BooksRepository) {}
 
-  async create(createBookDto: CreateBookDto): Promise<Book>{
-    return this.BooksRepository.create(createBookDto)
+  async create(createBookDto: CreateBookDto): Promise<Book> {
+    return this.BooksRepository.create(createBookDto);
   }
 
-  async findAllBooks(){
+  async findAllBooks() {
     return this.BooksRepository.findAllBooks();
   }
 }

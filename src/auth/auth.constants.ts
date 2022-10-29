@@ -9,8 +9,8 @@ const authConstants = {
   redis: {
     expirationTime: {
       jwt: {
-        accessToken: 86400, 
-        refreshToken: 604800, 
+        accessToken: 86400,
+        refreshToken: 604800,
       },
     },
   },

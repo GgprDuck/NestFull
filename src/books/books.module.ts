@@ -5,14 +5,13 @@ import { BooksService } from './books.service';
 import { Book, BookSchema } from './schemas/books.schema';
 import { BooksRepository } from './books.repository';
 import { UsersModule } from '../users/users.module';
-import { UsersRepository } from '../users/users.repository';
 import { User, UserSchema } from '../users/schemas/users.schema';
-import { JwtService } from '@nestjs/jwt';
-import { AuthService } from '../auth/auth.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name:Book.name, schema: BookSchema }, { name:User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: Book.name, schema: BookSchema }, { name: User.name, schema: UserSchema }
+    ]),
     UsersModule,
   ],
   controllers: [BooksController],

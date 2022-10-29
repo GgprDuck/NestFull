@@ -3,54 +3,55 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { SignInDto } from './dto/signIn.dto';
 
 @Injectable()
 export class UsersRepository {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(User.name) private UserModel: Model<UserDocument>,
   ) { }
 
-  async NewId(_id: string, _idNew: string): Promise<User | "User wasn`t found"> {
-    const user = await this.userModel.findById({ _id: _id });
+  async NewId(_id: string, _idNew: string): Promise<User | 'User wasn`t found'> {
+    const user = await this.UserModel.findById({ _id });
     user._id = _idNew;
     await user.save();
     return user;
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
+    const createdUser = new this.UserModel(createUserDto);
     return createdUser.save();
   }
 
-  async findById(_id: string): Promise<User | "User wasn`t found"> {
-    const user = await this.userModel.findById({ _id: _id });
+  async findById(_id: string): Promise<User | 'User wasn`t found'> {
+    const user = await this.UserModel.findById({ _id });
     if (user) {
       return user;
     }
-    return "User wasn`t found";
+    return 'User wasn`t found';
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+    return this.UserModel.find().exec();
   }
 
   async findOne(name: string) {
-    const user = await this.userModel.findOne({ name: name });
+    const user = await this.UserModel.findOne({ name });
     if (user) {
       return user;
     }
-    return "User wasn`t found";
+    return 'User wasn`t found';
   }
 
-  async validateUser(SignInDto: SignInDto): Promise<any> {
-    const user = await this.userModel.findOne({ name: SignInDto.name, email: SignInDto.email, password: SignInDto.password }, {"name":1, "email":1, "password":1});
-    if (user.password === SignInDto.password) {
-      const user = await this.userModel.findOne({ name: SignInDto.name, email: SignInDto.email, password: SignInDto.password }, {"name":1, "email":1, "password":0});
-      return user;
-    }
-    return null;
+  async validateUser(SignInDto): Promise<User> {
+    const user = await this.UserModel.findOne(
+      { name: SignInDto.name, email: SignInDto.email, password: SignInDto.password },
+      { name: 1, email: 1, password: 0 },
+    );
+
+    return user;
   }
 
+  async saveUser(user) {
+    await user.save();
+  }
 }
-
