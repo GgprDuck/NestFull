@@ -8,13 +8,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersRepository {
   @InjectModel(User.name) private UserModel: Model<UserDocument>;
 
-  async NewId(_id: string, _idNew: string): Promise<User | 'User wasn`t found'> {
-    const user = await this.UserModel.findById({ _id });
-    user.id = _idNew;
-    await user.save();
-    return user;
-  }
-
   async create(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.UserModel(createUserDto);
     return createdUser.save();
@@ -43,7 +36,7 @@ export class UsersRepository {
   async validateUser(SignInDto): Promise<User> {
     const user = await this.UserModel.findOne(
       { name: SignInDto.name, email: SignInDto.email, password: SignInDto.password },
-      { name: 1, email: 1, password: 0 },
+      { name: 1, email: 1, password: 1 },
     );
 
     return user;

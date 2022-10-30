@@ -83,48 +83,4 @@ export class UsersController {
 
     return user;
   }
-
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          $ref: getSchemaPath(User),
-        },
-      },
-    },
-    description: '200. The id successfully changed.',
-  })
-  @ApiNotFoundResponse({
-    description: '404. User not found.',
-  })
-  @Post('/newId')
-  async changeIp(@Body('_idNew') _idNew: string, @Body('_id') _id: string): Promise<string | User> {
-    const user = await this.usersService.newId(_id, _idNew);
-
-    if (!user) {
-      throw new NotFoundException('User was not found');
-    }
-
-    return user;
-  }
-
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          $ref: getSchemaPath(User),
-        },
-      },
-    },
-    description: '200. The user successfully signed-in.',
-  })
-  @ApiBadRequestResponse({
-    description: '400. BadRequestException.',
-  })
-  @Post()
-  validateUser(@Body() authUser: AuthDto) {
-    return this.usersService.ValidateUser(authUser);
-  }
 }

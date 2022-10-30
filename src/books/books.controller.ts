@@ -1,8 +1,9 @@
 import {
-  BadRequestException, Body, UseGuards,
+  BadRequestException, Body, Get, NotFoundException, UseGuards,
 } from '@nestjs/common';
 import { Controller, Post } from '@nestjs/common/decorators';
 import { ApiBadRequestResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { get } from 'http';
 import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
@@ -35,5 +36,30 @@ export class BooksController {
     }
 
     return book;
+  }
+
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          $ref: getSchemaPath(Book),
+        },
+      },
+    },
+    description: '200. Success. Returns a book',
+  })
+  @ApiBadRequestResponse({
+    description: '400. BadRequestException.',
+  })
+  @Get('/findAllBooks')
+  async findAllBooks() {
+    const books = this.bookService.findAllBooks();
+
+    if (!books) {
+      throw new NotFoundException('Cannot find books');
+    }
+
+    return books;
   }
 }

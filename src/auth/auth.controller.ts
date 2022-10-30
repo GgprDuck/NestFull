@@ -4,7 +4,6 @@ import {
 import {
   ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath,
 } from '@nestjs/swagger';
-import LocalAuthGuard from '../guards/local.auth.guards';
 import AuthService from './auth.service';
 import { AuthDto } from './dto/auth.log.dto';
 
@@ -12,7 +11,6 @@ import { AuthDto } from './dto/auth.log.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-    @UseGuards(LocalAuthGuard)
     @ApiOkResponse({
       schema: {
         type: 'object',

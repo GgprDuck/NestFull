@@ -8,9 +8,10 @@ import { UsersRepository } from '../users/users.repository';
 
 @Injectable()
 export default class AuthService {
-  usersRepository: UsersRepository;
-
-  jwtService: JwtService;
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersRepository:UsersRepository,
+  ) { }
 
   public async verifyToken(token: string, secret: string): Promise<User | null> {
     try {
@@ -71,7 +72,10 @@ export default class AuthService {
     };
   }
 
-  public async RefreshTokens(authDto): Promise<{ accessToken: string; refreshToken: string; }> {
+  public async RefreshTokens(authDto): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const payload: Payload = {
       name: authDto.name,
       email: authDto.email,
@@ -127,6 +131,7 @@ export default class AuthService {
   public async authLogout(authDto) {
     const user = await this.usersRepository.validateUser(authDto);
     user.isEnabled = false;
+    await this.usersRepository.saveUser(user);
     return user;
   }
 }

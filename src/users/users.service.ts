@@ -11,10 +11,6 @@ export class UsersService {
     return this.usersRepository.create(createUserDto);
   }
 
-  async newId(_id: string, _idNew: string): Promise<User | 'User wasn`t found'> {
-    return this.usersRepository.NewId(_id, _idNew);
-  }
-
   async findById(_id: string): Promise<User | 'User wasn`t found'> {
     return this.usersRepository.findById(_id);
   }
