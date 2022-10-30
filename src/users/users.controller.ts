@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Body, NotFoundException, UnauthorizedException, UseGuards,
+  BadRequestException, Body, NotFoundException, UseGuards,
 } from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common/decorators';
 import {
@@ -10,14 +10,10 @@ import { User } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import LocalAuthGuard from '../guards/local.auth.guards';
 import { AuthDto } from '../auth/dto/auth.log.dto';
-import { AuthService } from '../auth/auth.service';
 
 @Controller()
 export class UsersController {
-  constructor(
-    private usersService: UsersService,
-    private authService: AuthService,
-  ) {}
+  usersService: UsersService;
 
   @ApiOkResponse({
     schema: {
@@ -129,59 +125,8 @@ export class UsersController {
   @ApiBadRequestResponse({
     description: '400. BadRequestException.',
   })
-
   @Post()
-  validateUser(AuthDto) {
-    return this.usersService.ValidateUser(AuthDto);
-  }
-
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          $ref: getSchemaPath(AuthDto),
-        },
-      },
-    },
-    description: '200. Success. Returns a user with tocken',
-  })
-  @ApiBadRequestResponse({
-    description: '404. NotFoundException. User was not found',
-  })
-  @Post('/log')
-  login(@Body() AuthDto) {
-    const user = this.authService.log(AuthDto);
-
-    if (!user) {
-      throw new BadRequestException('Enter right values');
-    }
-
-    return user;
-  }
-
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          $ref: getSchemaPath(AuthDto),
-        },
-      },
-    },
-    description: '200. Success. Returns a user with tocken',
-  })
-  @ApiNotFoundResponse({
-    description: '404. NotFoundException. User was not found',
-  })
-  @Post('/logout')
-  logout(@Body() AuthDto) {
-    const user = this.authService.authLogout(AuthDto);
-
-    if (!user) {
-      throw new NotFoundException('Enter right values');
-    }
-
-    return user;
+  validateUser(@Body() authUser: AuthDto) {
+    return this.usersService.ValidateUser(authUser);
   }
 }

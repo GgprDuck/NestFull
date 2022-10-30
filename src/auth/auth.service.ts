@@ -7,11 +7,10 @@ import authConstants from './auth.constants';
 import { UsersRepository } from '../users/users.repository';
 
 @Injectable()
-export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private usersRepository: UsersRepository,
-  ) { }
+export default class AuthService {
+  usersRepository: UsersRepository;
+
+  jwtService: JwtService;
 
   public async verifyToken(token: string, secret: string): Promise<User | null> {
     try {
@@ -42,7 +41,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  public async log(authDto) {
+  public async log(authDto:AuthDto) {
     const payload: Payload = {
       name: authDto.name,
       email: authDto.email,
@@ -60,9 +59,9 @@ export class AuthService {
       secret: authConstants.jwt.secret,
     });
 
-    user.accessTocken = accessToken;
-    user.refreshTocken = refreshToken;
-    user.isEnaibled = true;
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
+    user.isEnabled = true;
 
     await this.usersRepository.saveUser(user);
 
@@ -72,7 +71,7 @@ export class AuthService {
     };
   }
 
-  public async RefreshTockens(authDto): Promise<{
+  public async RefreshTokens(authDto): Promise<{
     accessToken: string;
     refreshToken: string;
 }> {
@@ -84,7 +83,7 @@ export class AuthService {
 
     const user = await this.usersRepository.validateUser(authDto);
 
-    const check = this.verifyToken(user.accessTocken, authConstants.jwt.secret);
+    const check = this.verifyToken(user.accessToken, authConstants.jwt.secret);
     if (check) {
       const accessToken = this.jwtService.sign(payload, {
         expiresIn: authConstants.jwt.expirationTime.accessToken,
@@ -95,8 +94,8 @@ export class AuthService {
         secret: authConstants.jwt.secret,
       });
 
-      user.accessTocken = accessToken;
-      user.refreshTocken = refreshToken;
+      user.accessToken = accessToken;
+      user.refreshToken = refreshToken;
 
       await this.usersRepository.saveUser(user);
 
@@ -121,16 +120,16 @@ export class AuthService {
       secret: authConstants.jwt.secret,
     });
 
-    user.accessTocken = accessToken;
+    user.accessToken = accessToken;
 
-    user.accessTocken = accessToken;
+    user.accessToken = accessToken;
 
     return accessToken;
   }
 
   public async authLogout(authDto) {
     const user = await this.usersRepository.validateUser(authDto);
-    user.isEnaibled = false;
+    user.isEnabled = false;
     return user;
   }
 }

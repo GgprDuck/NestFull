@@ -13,13 +13,13 @@ export class User {
     password: string;
 
   @Prop({ required: true })
-    accessTocken:string;
+    accessToken:string;
 
   @Prop({ required: true })
-    refreshTocken:string;
+    refreshToken:string;
 
   @Prop({ required: true })
-    isEnaibled:Boolean;
+    isEnabled:Boolean;
 }
 
 export type UserDocument = User & Document;

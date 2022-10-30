@@ -10,9 +10,7 @@ import LocalAuthGuard from '../guards/local.auth.guards';
 
 @Controller()
 export class BooksController {
-  constructor(
-    private BooksService: BooksService,
-  ) { }
+  BooksService: BooksService;
 
   @UseGuards(LocalAuthGuard)
   @ApiOkResponse({

@@ -18,8 +18,8 @@ export class CreateUserDto {
     isEnabled: false;
 
   @ApiProperty()
-    accessTocken: string;
+    accessToken: string;
 
   @ApiProperty()
-    refreshTocken: string;
+    refreshToken: string;
 }

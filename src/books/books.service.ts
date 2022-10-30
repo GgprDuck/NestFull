@@ -5,7 +5,7 @@ import { BooksRepository } from './books.repository';
 
 @Injectable()
 export class BooksService {
-  constructor(private BooksRepository: BooksRepository) {}
+  BooksRepository: BooksRepository;
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     return this.BooksRepository.create(createBookDto);

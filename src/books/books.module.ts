@@ -10,7 +10,7 @@ import { User, UserSchema } from '../users/schemas/users.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Book.name, schema: BookSchema }, { name: User.name, schema: UserSchema }
+      { name: Book.name, schema: BookSchema }, { name: User.name, schema: UserSchema },
     ]),
     UsersModule,
   ],

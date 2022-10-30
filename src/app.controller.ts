@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 
 @Controller('/api')
 export class AppController {
-  constructor(private appService: AppService) {}
+  appService: AppService;
 
   @ApiResponse({ status: 200, description: 'Hi :)' })
   @Get('/hi')

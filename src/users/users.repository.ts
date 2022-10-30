@@ -6,13 +6,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(User.name) private UserModel: Model<UserDocument>,
-  ) { }
+  @InjectModel(User.name) private UserModel: Model<UserDocument>;
 
   async NewId(_id: string, _idNew: string): Promise<User | 'User wasn`t found'> {
     const user = await this.UserModel.findById({ _id });
-    user._id = _idNew;
+    user.id = _idNew;
     await user.save();
     return user;
   }
