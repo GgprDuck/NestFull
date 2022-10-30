@@ -8,12 +8,11 @@ import {
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import LocalAuthGuard from '../guards/local.auth.guards';
 import { AuthDto } from '../auth/dto/auth.log.dto';
 
 @Controller()
 export class UsersController {
-  usersService: UsersService;
+  constructor(private usersService: UsersService) { }
 
   @ApiOkResponse({
     schema: {
@@ -110,7 +109,6 @@ export class UsersController {
     return user;
   }
 
-  @UseGuards(LocalAuthGuard)
   @ApiOkResponse({
     schema: {
       type: 'object',

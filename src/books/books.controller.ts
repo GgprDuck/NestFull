@@ -10,9 +10,8 @@ import LocalAuthGuard from '../guards/local.auth.guards';
 
 @Controller()
 export class BooksController {
-  BooksService: BooksService;
+  constructor(private bookService: BooksService) { }
 
-  @UseGuards(LocalAuthGuard)
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -29,7 +28,7 @@ export class BooksController {
   })
     @Post('/createBook')
   async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
-    const book = await this.BooksService.create(createBookDto);
+    const book = await this.bookService.create(createBookDto);
 
     if (!book) {
       throw new BadRequestException('Enter all necessary values');

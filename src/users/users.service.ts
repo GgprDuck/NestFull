@@ -5,29 +5,29 @@ import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  UsersRepository: UsersRepository;
+  constructor(private readonly usersRepository: UsersRepository) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return this.UsersRepository.create(createUserDto);
+    return this.usersRepository.create(createUserDto);
   }
 
   async newId(_id: string, _idNew: string): Promise<User | 'User wasn`t found'> {
-    return this.UsersRepository.NewId(_id, _idNew);
+    return this.usersRepository.NewId(_id, _idNew);
   }
 
   async findById(_id: string): Promise<User | 'User wasn`t found'> {
-    return this.UsersRepository.findById(_id);
+    return this.usersRepository.findById(_id);
   }
 
   async findAll(): Promise<User[]> {
-    return this.UsersRepository.findAll();
+    return this.usersRepository.findAll();
   }
 
   async findOne(name: string) {
-    this.UsersRepository.findOne(name);
+    this.usersRepository.findOne(name);
   }
 
   async ValidateUser(AuthDto) {
-    return this.UsersRepository.validateUser(AuthDto);
+    return this.usersRepository.validateUser(AuthDto);
   }
 }

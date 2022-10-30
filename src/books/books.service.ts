@@ -5,13 +5,13 @@ import { BooksRepository } from './books.repository';
 
 @Injectable()
 export class BooksService {
-  BooksRepository: BooksRepository;
+  constructor(private readonly booksRepository: BooksRepository) { }
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
-    return this.BooksRepository.create(createBookDto);
+    return this.booksRepository.create(createBookDto);
   }
 
   async findAllBooks() {
-    return this.BooksRepository.findAllBooks();
+    return this.booksRepository.findAllBooks();
   }
 }

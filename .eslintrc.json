@@ -20,6 +20,11 @@
         "import/no-unresolved": [
             0, 
             { "caseSensitive": false }
-        ]
+        ],
+        "no-useless-constructor": "off",
+        "no-unused-vars": "off",
+        "no-empty-function": "off",
+        "class-methods-use-this": "off",
+        "import/extensions": "off"
     }
 }

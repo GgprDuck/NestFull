@@ -1,16 +1,18 @@
 import {
-  BadRequestException, Body, Controller, NotFoundException, Post,
+  BadRequestException, Body, Controller, NotFoundException, Post, UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, getSchemaPath,
 } from '@nestjs/swagger';
+import LocalAuthGuard from '../guards/local.auth.guards';
 import AuthService from './auth.service';
 import { AuthDto } from './dto/auth.log.dto';
 
 @Controller()
-export class AuthController extends AuthService {
-  authService: AuthService;
+export class AuthController {
+  constructor(private readonly authService: AuthService) { }
 
+    @UseGuards(LocalAuthGuard)
     @ApiOkResponse({
       schema: {
         type: 'object',

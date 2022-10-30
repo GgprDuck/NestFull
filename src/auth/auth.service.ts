@@ -71,10 +71,7 @@ export default class AuthService {
     };
   }
 
-  public async RefreshTokens(authDto): Promise<{
-    accessToken: string;
-    refreshToken: string;
-}> {
+  public async RefreshTokens(authDto): Promise<{ accessToken: string; refreshToken: string; }> {
     const payload: Payload = {
       name: authDto.name,
       email: authDto.email,
