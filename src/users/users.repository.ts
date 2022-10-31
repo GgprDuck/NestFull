@@ -3,14 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
+import { SignInDto } from './dto/signIn.dto';
 
 @Injectable()
 export class UsersRepository {
   @InjectModel(User.name) private UserModel: Model<UserDocument>;
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.UserModel(createUserDto);
-    return createdUser.save();
+    const result = createUserDto.email.includes('@');
+    if (result) {
+      const createdUser = new this.UserModel(createUserDto);
+      return createdUser.save();
+    }
   }
 
   async findById(_id: string): Promise<User | 'User wasn`t found'> {
@@ -33,13 +37,15 @@ export class UsersRepository {
     return 'User wasn`t found';
   }
 
-  async validateUser(SignInDto): Promise<User> {
+  async validateUser(signInDto:SignInDto): Promise<User | any> {
     const user = await this.UserModel.findOne(
-      { name: SignInDto.name, email: SignInDto.email, password: SignInDto.password },
+      { name: signInDto.name, email: signInDto.email, password: signInDto.password },
       { name: 1, email: 1, password: 1 },
     );
-
-    return user;
+    if (user && user.password === signInDto.password) {
+      const result = { _id: user.id, name: user.name, email: user.email };
+      return result;
+    }
   }
 
   async saveUser(user) {

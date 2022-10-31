@@ -123,8 +123,6 @@ export default class AuthService {
 
     user.accessToken = accessToken;
 
-    user.accessToken = accessToken;
-
     return accessToken;
   }
 

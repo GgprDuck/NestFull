@@ -8,7 +8,6 @@ import {
 import { UsersService } from './users.service';
 import { User } from './schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthDto } from '../auth/dto/auth.log.dto';
 
 @Controller()
 export class UsersController {
