@@ -10,11 +10,8 @@ export class UsersRepository {
   @InjectModel(User.name) private UserModel: Model<UserDocument>;
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const result = createUserDto.email.includes('@');
-    if (result) {
-      const createdUser = new this.UserModel(createUserDto);
-      return createdUser.save();
-    }
+    const createdUser = new this.UserModel(createUserDto);
+    return createdUser.save();
   }
 
   async findById(_id: string): Promise<User | 'User wasn`t found'> {
@@ -40,12 +37,9 @@ export class UsersRepository {
   async validateUser(signInDto:SignInDto): Promise<User | any> {
     const user = await this.UserModel.findOne(
       { name: signInDto.name, email: signInDto.email, password: signInDto.password },
-      { name: 1, email: 1, password: 1 },
+      { name: 1, email: 1 },
     );
-    if (user && user.password === signInDto.password) {
-      const result = { _id: user.id, name: user.name, email: user.email };
-      return result;
-    }
+    return user;
   }
 
   async saveUser(user) {
