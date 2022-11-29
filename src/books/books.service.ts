@@ -11,7 +11,7 @@ export class BooksService {
     return this.booksRepository.create(createBookDto);
   }
 
-  async findAllBooks() {
+  async findAllBooks(): Promise<Book[]> {
     return this.booksRepository.findAllBooks();
   }
 }

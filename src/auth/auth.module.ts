@@ -15,10 +15,13 @@ import { AuthController } from './auth.controller';
     UsersModule,
     JwtModule.register({
       secret: authConstants.jwt.secret,
+      signOptions: {
+        expiresIn: authConstants.redis.expirationTime.jwt.accessToken,
+      },
     }),
   ],
   providers: [AuthService, JwtService],
-  exports: [AuthService],
+  exports: [AuthService, PassportModule],
   controllers: [AuthController],
 })
 

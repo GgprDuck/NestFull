@@ -2,29 +2,42 @@ import {
   BadRequestException, Body, Get, NotFoundException, UseGuards,
 } from '@nestjs/common';
 import { Controller, Post } from '@nestjs/common/decorators';
-import { ApiBadRequestResponse, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
-import { get } from 'http';
+import {
+  ApiBadRequestResponse, ApiBearerAuth, ApiExtraModels, ApiOkResponse, ApiTags, getSchemaPath,
+} from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { Book } from './schemas/books.schema';
 import { CreateBookDto } from './books.dto/create-books.dto';
-import LocalAuthGuard from '../guards/local.auth.guards';
+import { BookDto } from './books.dto/book.dto';
+import JwtAuthGuard from '../guards/local.auth.guards';
 
+@ApiTags('Books')
+@ApiExtraModels(BookDto)
 @Controller()
 export class BooksController {
   constructor(private bookService: BooksService) { }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
     schema: {
       type: 'object',
       properties: {
         data: {
-          $ref: getSchemaPath(Book),
+          $ref: getSchemaPath(BookDto),
         },
       },
     },
     description: '200. Success. Returns a book',
   })
   @ApiBadRequestResponse({
+    schema: {
+      type: 'object',
+      example: {
+        message: 'string',
+        details: {},
+      },
+    },
     description: '400. BadRequestException.',
   })
     @Post('/createBook')
@@ -38,18 +51,27 @@ export class BooksController {
     return book;
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
     schema: {
       type: 'object',
       properties: {
         data: {
-          $ref: getSchemaPath(Book),
+          $ref: getSchemaPath(BookDto),
         },
       },
     },
     description: '200. Success. Returns a book',
   })
   @ApiBadRequestResponse({
+    schema: {
+      type: 'object',
+      example: {
+        message: 'string',
+        details: {},
+      },
+    },
     description: '400. BadRequestException.',
   })
   @Get('/findAllBooks')
